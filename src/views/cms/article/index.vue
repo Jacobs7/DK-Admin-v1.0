@@ -146,14 +146,24 @@
         <el-form-item label="简介" prop="description">
           <el-input v-model="form.description" placeholder="请输入简介"></el-input>
         </el-form-item>
-        <el-form-item label="类型(1:普通,2:热门...)" prop="type">
-          <el-select-dropdown v-model="form.type" placeholder="请输入类型(1:普通,2:热门...)"></el-select-dropdown>
+        <el-form-item label="类型" prop="type">
+          <el-select v-model="form.type" placeholder="请输入类型(1:普通,2:热门...)">
+            <el-option value="1">普通</el-option>
+            <el-option value="2">热门</el-option>
+          </el-select>
         </el-form-item>
-        <el-form-item label="是否允许评论(0:不允许,1:允许)" prop="allowcomments">
-          <el-select-dropdown v-model="form.allowcomments" placeholder="请输入是否允许评论(0:不允许,1:允许)"></el-select-dropdown>
+        <el-form-item label="是否允许评论" prop="allowcomments">
+          <el-select v-model="form.allowcomments" placeholder="请输入是否允许评论(0:不允许,1:允许)">
+            <el-option value="0">不允许</el-option>
+            <el-option value="1">允许</el-option>
+          </el-select>
         </el-form-item>
-        <el-form-item label="状态(-1:不通过,0未审核,1:通过)" prop="status">
-          <el-select-dropdown v-model="form.status" placeholder="请输入状态(-1:不通过,0未审核,1:通过)"></el-select-dropdown>
+        <el-form-item label="状态" prop="status">
+          <el-select v-model="form.status" placeholder="请输入状态(-1:不通过,0未审核,1:通过)">
+            <el-option value="-1">不通过</el-option>
+            <el-option value="0">未审核</el-option>
+            <el-option value="1">通过</el-option>
+          </el-select>
         </el-form-item>
         <el-form-item label="内容" prop="content">
           <el-input v-model="form.content" placeholder="请输入内容"></el-input>
@@ -196,11 +206,10 @@
     putObj
   } from 'api/cms/article/index';
   import { mapGetters } from 'vuex';
-  import ElSelectDropdown from "element-ui/packages/select/src/select-dropdown";
+
 
   export default {
     name: 'article',
-    components: {ElSelectDropdown},
     data() {
       return {
         form: {
