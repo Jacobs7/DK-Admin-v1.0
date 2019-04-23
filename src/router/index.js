@@ -154,4 +154,17 @@ export const asyncRouterMap = [{
     name: '文章管理',
     authority: 'articleManager'
   }]
+},
+{
+  path: '/shopManager',
+  component: Layout,
+  name: '内容管理系統',
+  icon: 'setting',
+  authority: 'shopManager',
+  children: [{
+    path: 'goodsManager',
+    component: _import('shop/detail/index'),
+    name: '文章管理',
+    authority: 'articleManager'
+  }]
 }];

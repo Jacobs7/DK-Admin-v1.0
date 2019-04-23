@@ -51,7 +51,7 @@
           <span>{{scope.row.description}}</span>
         </template>
       </el-table-column>
-      <el-table-column width="200px" align="center" label="类型(1:普通,2:热门...)">
+      <el-table-column width="200px" align="center" label="类型(1:普通,2:热门...)" >
         <template scope="scope">
           <span>{{scope.row.type}}</span>
         </template>
@@ -154,15 +154,19 @@
         </el-form-item>
         <el-form-item label="是否允许评论" prop="allowcomments">
           <el-select v-model="form.allowcomments" placeholder="请输入是否允许评论(0:不允许,1:允许)">
-            <el-option value="0">不允许</el-option>
-            <el-option value="1">允许</el-option>
+            <el-option
+              v-for="item in optionsAllow" :key="item.value" :label="item.label" :value="item.value">
+            </el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="状态" prop="status">
           <el-select v-model="form.status" placeholder="请输入状态(-1:不通过,0未审核,1:通过)">
-            <el-option value="-1">不通过</el-option>
-            <el-option value="0">未审核</el-option>
-            <el-option value="1">通过</el-option>
+
+            <el-option
+              v-for="item in optionsStatus" :key="item.value" :label="item.label" :value="item.value">
+            </el-option>
+
+           
           </el-select>
         </el-form-item>
         <el-form-item label="内容" prop="content">
@@ -210,7 +214,7 @@
 
   export default {
     name: 'article',
-    data() {
+    data: function () {
       return {
         form: {
           topicId: undefined,
@@ -221,7 +225,13 @@
           keywords: undefined,
           description: undefined,
           type: undefined,
-          allowcomments: undefined,
+          allowcomments: [{
+            value: '0',
+            label: '不允许'
+          }, {
+            value: '1',
+            label: '允许'
+          }],
           status: undefined,
           content: undefined,
           userId: undefined,
@@ -455,7 +465,24 @@
           update: '编辑',
           create: '创建'
         },
-        tableKey: 0
+        tableKey: 0,
+        optionsAllow: [{
+          value: '0',
+          label: '不允许'
+        }, {
+          value: '1',
+          label: '允许'
+        }],
+        optionsStatus: [{
+          value: '-1',
+          label: '不通过'
+        }, {
+          value: '0',
+          label: '未审核'
+        }, {
+          value: '1',
+          label: '通过'
+        }]
       }
     },
     created() {
