@@ -3,7 +3,7 @@
     <div class="filter-container">
       <el-input @keyup.enter.native="handleFilter" style="width: 200px;" class="filter-item" placeholder="姓名或账户" v-model="listQuery.name"> </el-input>
       <el-button class="filter-item" type="primary" v-waves icon="search" @click="handleFilter">搜索</el-button>
-      <el-button class="filter-item" v-if="detailManager_btn_add" style="margin-left: 10px;" @click="handleCreate" type="primary" icon="edit">添加</el-button>
+      <el-button class="filter-item" v-if="orderManager_btn_add" style="margin-left: 10px;" @click="handleCreate" type="primary" icon="edit">添加</el-button>
     </div>
     <el-table :key='tableKey' :data="list" v-loading.body="listLoading" border fit highlight-current-row style="width: 100%">
 
@@ -12,20 +12,30 @@
         <span>{{scope.row.id}}</span>
       </template>
     </el-table-column>
-        <el-table-column width="200px" align="center" label="商品名称">
+        <el-table-column width="200px" align="center" label="订单生成日期">
       <template scope="scope">
-        <span>{{scope.row.shopName}}</span>
+        <span>{{scope.row.orderdate}}</span>
       </template>
     </el-table-column>
-        <el-table-column width="200px" align="center" label="商品价格">
+        <el-table-column width="200px" align="center" label="运输方式">
       <template scope="scope">
-        <span>{{scope.row.shopPrice}}</span>
+        <span>{{scope.row.trmode}}</span>
+      </template>
+    </el-table-column>
+        <el-table-column width="200px" align="center" label="接收者">
+      <template scope="scope">
+        <span>{{scope.row.recipient}}</span>
+      </template>
+    </el-table-column>
+        <el-table-column width="200px" align="center" label="接收地址">
+      <template scope="scope">
+        <span>{{scope.row.readdress}}</span>
       </template>
     </el-table-column>
         <el-table-column fixed="right" align="center" label="操作" width="150"> <template scope="scope">
-        <el-button v-if="detailManager_btn_edit" size="small" type="success" @click="handleUpdate(scope.row)">编辑
+        <el-button v-if="orderManager_btn_edit" size="small" type="success" @click="handleUpdate(scope.row)">编辑
         </el-button>
-        <el-button v-if="detailManager_btn_del" size="small" type="danger" @click="handleDelete(scope.row)">删除
+        <el-button v-if="orderManager_btn_del" size="small" type="danger" @click="handleDelete(scope.row)">删除
         </el-button>
       </template> </el-table-column>
     </el-table>
@@ -34,11 +44,17 @@
     </div>
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
       <el-form :model="form" :rules="rules" ref="form" label-width="100px">
-        <el-form-item label="" prop="shopName">
-      <el-input v-model="form.shopName" placeholder="请输入"></el-input>
+        <el-form-item label="订单生成日期" prop="orderdate">
+      <el-input v-model="form.orderdate" placeholder="请输入订单生成日期"></el-input>
     </el-form-item>
-        <el-form-item label="" prop="shopPrice">
-      <el-input v-model="form.shopPrice" placeholder="请输入"></el-input>
+        <el-form-item label="运输方式" prop="trmode">
+      <el-input v-model="form.trmode" placeholder="请输入运输方式"></el-input>
+    </el-form-item>
+        <el-form-item label="接收者" prop="recipient">
+      <el-input v-model="form.recipient" placeholder="请输入接收者"></el-input>
+    </el-form-item>
+        <el-form-item label="接收地址" prop="readdress">
+      <el-input v-model="form.readdress" placeholder="请输入接收地址"></el-input>
     </el-form-item>
         </el-form>
       <div slot="footer" class="dialog-footer">
@@ -57,19 +73,19 @@
       getObj,
       delObj,
       putObj
-  } from 'api/shop/detail/index';
+  } from 'api/shop/order/index';
   import { mapGetters } from 'vuex';
   export default {
-    name: 'detail',
+    name: 'order',
     data() {
       return {
         form: {
-          shopName: undefined, shopPrice: undefined },
+          orderdate: undefined, trmode: undefined, recipient: undefined, readdress: undefined },
         rules: {
-          shopName: [
+          orderdate: [
             {
               required: true,
-              message: '请输入',
+              message: '请输入订单生成日期',
               trigger: 'blur'
             },
             {
@@ -78,10 +94,34 @@
               message: '长度在 3 到 20 个字符',
               trigger: 'blur'
             }
-          ], shopPrice: [
+          ], trmode: [
             {
               required: true,
-              message: '请输入',
+              message: '请输入运输方式',
+              trigger: 'blur'
+            },
+            {
+              min: 3,
+              max: 20,
+              message: '长度在 3 到 20 个字符',
+              trigger: 'blur'
+            }
+          ], recipient: [
+            {
+              required: true,
+              message: '请输入接收者',
+              trigger: 'blur'
+            },
+            {
+              min: 3,
+              max: 20,
+              message: '长度在 3 到 20 个字符',
+              trigger: 'blur'
+            }
+          ], readdress: [
+            {
+              required: true,
+              message: '请输入接收地址',
               trigger: 'blur'
             },
             {
@@ -101,9 +141,9 @@
         },
         dialogFormVisible: false,
         dialogStatus: '',
-        detailManager_btn_edit: false,
-        detailManager_btn_del: false,
-        detailManager_btn_add: false,
+        orderManager_btn_edit: false,
+        orderManager_btn_del: false,
+        orderManager_btn_add: false,
         textMap: {
           update: '编辑',
           create: '创建'
@@ -113,9 +153,9 @@
     },
     created() {
       this.getList();
-      this.detailManager_btn_edit = this.elements['detailManager:btn_edit'];
-      this.detailManager_btn_del = this.elements['detailManager:btn_del'];
-      this.detailManager_btn_add = this.elements['detailManager:btn_add'];
+      this.orderManager_btn_edit = this.elements['orderManager:btn_edit'];
+      this.orderManager_btn_del = this.elements['orderManager:btn_del'];
+      this.orderManager_btn_add = this.elements['orderManager:btn_add'];
     },
     computed: {
       ...mapGetters([
