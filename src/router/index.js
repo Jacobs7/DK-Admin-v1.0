@@ -158,13 +158,13 @@ export const asyncRouterMap = [{
 {
   path: '/shopManager',
   component: Layout,
-  name: '内容管理系統',
+  name: '商城管理系統',
   icon: 'setting',
   authority: 'shopManager',
   children: [{
     path: 'goodsManager',
     component: _import('shop/detail/index'),
-    name: '文章管理',
-    authority: 'articleManager'
+    name: '商品管理',
+    authority: 'goodsManager'
   }]
 }];

@@ -1,7 +1,6 @@
 import fetch from 'utils/fetch';
 
 export function page(query) {
-  console.log('log from datatech');
   return fetch({
     url: '/api/cms/article/pagetest',
     method: 'get',

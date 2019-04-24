@@ -51,7 +51,7 @@
           <span>{{scope.row.description}}</span>
         </template>
       </el-table-column>
-      <el-table-column width="200px" align="center" label="类型(1:普通,2:热门...)" >
+      <el-table-column width="200px" align="center" label="类型(1:普通,2:热门...)">
         <template scope="scope">
           <span>{{scope.row.type}}</span>
         </template>
@@ -166,7 +166,7 @@
               v-for="item in optionsStatus" :key="item.value" :label="item.label" :value="item.value">
             </el-option>
 
-           
+
           </el-select>
         </el-form-item>
         <el-form-item label="内容" prop="content">
@@ -185,10 +185,10 @@
           <el-input v-model="form.systemId" placeholder="请输入所属系统"></el-input>
         </el-form-item>
         <!--<el-form-item label="创建时间" prop="ctime">-->
-          <!--<el-input v-model="form.ctime" placeholder="请输入创建时间"></el-input>-->
+        <!--<el-input v-model="form.ctime" placeholder="请输入创建时间"></el-input>-->
         <!--</el-form-item>-->
         <!--<el-form-item label="排序" prop="orders">-->
-          <!--<el-input v-model="form.orders" placeholder="请输入排序"></el-input>-->
+        <!--<el-input v-model="form.orders" placeholder="请输入排序"></el-input>-->
         <!--</el-form-item>-->
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -209,12 +209,133 @@
     delObj,
     putObj
   } from 'api/cms/article/index';
-  import { mapGetters } from 'vuex';
+  import {mapGetters} from 'vuex';
 
 
   export default {
     name: 'article',
-    data: function () {
+    created() {
+      this.getList();
+      this.articleManager_btn_edit = this.elements['articleManager:btn_edit'];
+      this.articleManager_btn_del = this.elements['articleManager:btn_del'];
+      this.articleManager_btn_add = this.elements['articleManager:btn_add'];
+    },
+    computed: {
+      ...mapGetters([
+        'elements'
+      ])
+    },
+    methods: {
+      getList() {
+        this.listLoading = true;
+        page(this.listQuery)
+          .then(response => {
+            this.list = response.data.rows;
+            this.total = response.data.total;
+            this.listLoading = false;
+          })
+      },
+      handleFilter() {
+        this.getList();
+      },
+      handleSizeChange(val) {
+        this.listQuery.limit = val;
+        this.getList();
+      },
+      handleCurrentChange(val) {
+        this.listQuery.page = val;
+        this.getList();
+      },
+      handleCreate() {
+        this.resetTemp();
+        this.dialogStatus = 'create';
+        this.dialogFormVisible = true;
+      },
+      handleUpdate(row) {
+        getObj(row.articleId)
+          .then(response => {
+            this.form = response.data;
+            this.dialogFormVisible = true;
+            this.dialogStatus = 'update';
+          });
+      },
+      handleDelete(row) {
+        this.$confirm('此操作将永久删除, 是否继续?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        })
+          .then(() => {
+            delObj(row.articleId)
+              .then(() => {
+                this.$notify({
+                  title: '成功',
+                  message: '删除成功',
+                  type: 'success',
+                  duration: 2000
+                });
+                const index = this.list.indexOf(row);
+                this.list.splice(index, 1);
+              });
+          });
+      },
+      create(formName) {
+        const set = this.$refs;
+        set[formName].validate(valid => {
+          if (valid) {
+            addObj(this.form)
+              .then(() => {
+                this.dialogFormVisible = false;
+                this.getList();
+                this.$notify({
+                  title: '成功',
+                  message: '创建成功',
+                  type: 'success',
+                  duration: 2000
+                });
+              })
+          } else {
+            return false;
+          }
+        });
+      },
+      cancel(formName) {
+        this.dialogFormVisible = false;
+        const set = this.$refs;
+        set[formName].resetFields();
+      },
+      update(formName) {
+        const set = this.$refs;
+        set[formName].validate(valid => {
+          if (valid) {
+            this.dialogFormVisible = false;
+            this.form.password = undefined;
+            putObj(this.form.articleId, this.form).then(() => {
+              this.dialogFormVisible = false;
+              this.getList();
+              this.$notify({
+                title: '成功',
+                message: '创建成功',
+                type: 'success',
+                duration: 2000
+              });
+            });
+          } else {
+            return false;
+          }
+        });
+      },
+      resetTemp() {
+        this.form = {
+          username: undefined,
+          name: undefined,
+          sex: '男',
+          password: undefined,
+          description: undefined
+        };
+      }
+    },
+    data() {
       return {
         form: {
           topicId: undefined,
@@ -483,127 +604,6 @@
           value: '1',
           label: '通过'
         }]
-      }
-    },
-    created() {
-      this.getList();
-      this.articleManager_btn_edit = this.elements['articleManager:btn_edit'];
-      this.articleManager_btn_del = this.elements['articleManager:btn_del'];
-      this.articleManager_btn_add = this.elements['articleManager:btn_add'];
-    },
-    computed: {
-      ...mapGetters([
-        'elements'
-      ])
-    },
-    methods: {
-      getList() {
-        this.listLoading = true;
-        page(this.listQuery)
-          .then(response => {
-            this.list = response.data.rows;
-            this.total = response.data.total;
-            this.listLoading = false;
-          })
-      },
-      handleFilter() {
-        this.getList();
-      },
-      handleSizeChange(val) {
-        this.listQuery.limit = val;
-        this.getList();
-      },
-      handleCurrentChange(val) {
-        this.listQuery.page = val;
-        this.getList();
-      },
-      handleCreate() {
-        this.resetTemp();
-        this.dialogStatus = 'create';
-        this.dialogFormVisible = true;
-      },
-      handleUpdate(row) {
-        getObj(row.articleId)
-          .then(response => {
-            this.form = response.data;
-            this.dialogFormVisible = true;
-            this.dialogStatus = 'update';
-          });
-      },
-      handleDelete(row) {
-        this.$confirm('此操作将永久删除, 是否继续?', '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning'
-        })
-          .then(() => {
-            delObj(row.articleId)
-              .then(() => {
-                this.$notify({
-                  title: '成功',
-                  message: '删除成功',
-                  type: 'success',
-                  duration: 2000
-                });
-                const index = this.list.indexOf(row);
-                this.list.splice(index, 1);
-              });
-          });
-      },
-      create(formName) {
-        const set = this.$refs;
-        set[formName].validate(valid => {
-          if (valid) {
-            addObj(this.form)
-              .then(() => {
-                this.dialogFormVisible = false;
-                this.getList();
-                this.$notify({
-                  title: '成功',
-                  message: '创建成功',
-                  type: 'success',
-                  duration: 2000
-                });
-              })
-          } else {
-            return false;
-          }
-        });
-      },
-      cancel(formName) {
-        this.dialogFormVisible = false;
-        const set = this.$refs;
-        set[formName].resetFields();
-      },
-      update(formName) {
-        const set = this.$refs;
-        set[formName].validate(valid => {
-          if (valid) {
-            this.dialogFormVisible = false;
-            this.form.password = undefined;
-            putObj(this.form.articleId, this.form).then(() => {
-              this.dialogFormVisible = false;
-              this.getList();
-              this.$notify({
-                title: '成功',
-                message: '创建成功',
-                type: 'success',
-                duration: 2000
-              });
-            });
-          } else {
-            return false;
-          }
-        });
-      },
-      resetTemp() {
-        this.form = {
-          username: undefined,
-          name: undefined,
-          sex: '男',
-          password: undefined,
-          description: undefined
-        };
       }
     }
   }
