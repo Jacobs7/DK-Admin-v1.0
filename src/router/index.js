@@ -166,5 +166,10 @@ export const asyncRouterMap = [{
     component: _import('shop/detail/index'),
     name: '商品管理',
     authority: 'goodsManager'
+  }, {
+    path: 'ordersManager',
+    component: _import('shop/order/index'),
+    name: '订单管理',
+    authority: 'ordersManager'
   }]
 }];
