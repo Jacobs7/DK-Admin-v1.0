@@ -101,6 +101,7 @@ export default {
       listQuery: {
         name: undefined
       },
+      listMenuGroupQuery:{},
       treeData: [],
       defaultProps: {
         children: 'children',
@@ -232,6 +233,11 @@ export default {
         path: undefined,
         enabled: undefined
       };
+    },
+    fillMenuGroupSel(){
+      fetchMenuGroup(this.listMenuGroupQuery).then(data => {
+        this.listMenuGroupQuery = data;
+      });
     }
   }
 }

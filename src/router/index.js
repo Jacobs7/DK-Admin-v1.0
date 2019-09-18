@@ -105,6 +105,12 @@ export const asyncRouterMap = [{
     component: _import('admin/gateLog/index'),
     name: '操作日志管理',
     authority: 'gateLogManager'
+  }, {
+    path: 'menuGroupManage',
+    icon: 'viewlist',
+    component: _import('admin/menuGroup/index'),
+    name:'菜单组管理',
+    authority:'menuGroupManage'
   }]
 },
 {
@@ -141,36 +147,5 @@ export const asyncRouterMap = [{
     component: _import('monitor/zipkin/index'),
     name: '服务状态监控',
     authority: 'serviceZipkinManager'
-  }]
-},
-{
-  path: '/cmsManager',
-  component: Layout,
-  name: '内容管理系統',
-  icon: 'setting',
-  authority: 'cmsManager',
-  children: [{
-    path: 'articleManager',
-    component: _import('cms/article/index'),
-    name: '文章管理',
-    authority: 'articleManager'
-  }]
-},
-{
-  path: '/shopManager',
-  component: Layout,
-  name: '商城管理系統',
-  icon: 'setting',
-  authority: 'shopManager',
-  children: [{
-    path: 'goodsManager',
-    component: _import('shop/detail/index'),
-    name: '商品管理',
-    authority: 'goodsManager'
-  }, {
-    path: 'ordersManager',
-    component: _import('shop/order/index'),
-    name: '订单管理',
-    authority: 'ordersManager'
   }]
 }];

@@ -1,22 +1,16 @@
 import fetch from 'utils/fetch';
 
-export function fetchTree(query) {
+export function page(query) {
   return fetch({
-    url: '/api/admin/menu/tree',
+    url: '/api/admin/menuGroup/page',
     method: 'get',
     params: query
   });
 }
 
-export function fetchAll() {
-  return fetch({
-    url: '/api/admin/menu/all',
-    method: 'get'
-  });
-}
 export function addObj(obj) {
   return fetch({
-    url: '/api/admin/menu',
+    url: '/api/admin/menuGroup',
     method: 'post',
     data: obj
   });
@@ -24,29 +18,22 @@ export function addObj(obj) {
 
 export function getObj(id) {
   return fetch({
-    url: '/api/admin/menu/' + id,
+    url: '/api/admin/menuGroup/' + id,
     method: 'get'
   })
 }
 
 export function delObj(id) {
   return fetch({
-    url: '/api/admin/menu/' + id,
+    url: '/api/admin/menuGroup/' + id,
     method: 'delete'
   })
 }
 
 export function putObj(id, obj) {
   return fetch({
-    url: '/api/admin/menu/' + id,
+    url: '/api/admin/menuGroup/' + id,
     method: 'put',
     data: obj
-  })
-}
-
-export function fetchMenuGroup(){
-  return fetch({
-    url:'/api/admin/menuGroup/all',
-    method:'get'
   })
 }
